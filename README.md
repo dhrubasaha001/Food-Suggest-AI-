@@ -32,11 +32,11 @@ Clone the repository
 ```bash
 git clone https://github.com/dhrubasaha001/Food-Suggest-AI-.git
 cd Food Suggest AI
+```
 
 ```bash
 pip install -r requirements.txt
 ```
-
 🏃‍♂️ Usage
 
 Start the application
