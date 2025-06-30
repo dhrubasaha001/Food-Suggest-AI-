@@ -1,0 +1,10 @@
+# Core FastAPI dependencies
+fastapi==0.104.1
+uvicorn[standard]==0.24.0
+
+# Pydantic (comes with FastAPI but explicit version for clarity)
+pydantic==2.5.0
+
+# Python standard library modules (these are built-in, no installation needed)
+# sqlite3 - built-in
+# datetime - built-in
