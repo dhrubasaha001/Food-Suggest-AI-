@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Food Suggestion AI - Frontend</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      transition: background-color 0.5s;
+    }
+  </style>
+</head>
+<body class="bg-gray-100 dark:bg-gray-900 min-h-screen flex flex-col items-center justify-center px-4">
+  <div class="max-w-lg w-full bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8 space-y-6">
+    <h1 class="text-4xl font-bold text-center text-gray-900 dark:text-gray-100 mb-4">Food Suggestion AI 🍕🍔🍣</h1>
+    
+    <input id="inputText" type="text" placeholder="Type your mood or food craving..."
+      class="w-full px-4 py-3 rounded-md border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition" />
+    
+    <button id="suggestBtn" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 rounded-md transition duration-300">Get Suggestion</button>
+    
+    <div id="suggestion" class="text-center text-2xl font-semibold mt-6 text-indigo-700 dark:text-indigo-400 min-h-[3rem]"></div>
+    
+    <!-- Dark mode toggle -->
+    <div class="flex justify-center items-center space-x-2 mt-6">
+      <span class="text-gray-700 dark:text-gray-300 font-semibold">Light</span>
+      <label for="darkToggle" class="inline-flex relative items-center cursor-pointer">
+        <input type="checkbox" id="darkToggle" class="sr-only peer" />
+        <div class="w-11 h-6 bg-gray-300 rounded-full peer-checked:bg-indigo-600 transition"></div>
+        <div class="absolute left-1 top-1 w-4 h-4 bg-white rounded-full transition-transform peer-checked:translate-x-5"></div>
+      </label>
+      <span class="text-gray-700 dark:text-gray-300 font-semibold">Dark</span>
+    </div>
+  </div>
+
+  <script>
+    // Dark mode toggle with localStorage
+    const darkToggle = document.getElementById('darkToggle');
+    const htmlEl = document.documentElement;
+    if (localStorage.getItem('darkMode') === 'true') {
+      htmlEl.classList.add('dark');
+      darkToggle.checked = true;
+    }
+    darkToggle.addEventListener('change', () => {
+      if (darkToggle.checked) {
+        htmlEl.classList.add('dark');
+        localStorage.setItem('darkMode', 'true');
+      } else {
+        htmlEl.classList.remove('dark');
+        localStorage.setItem('darkMode', 'false');
+      }
+    });
+
+    const inputText = document.getElementById('inputText');
+    const suggestBtn = document.getElementById('suggestBtn');
+    const suggestion = document.getElementById('suggestion');
+
+    // ✅ Real backend fetch function
+    async function fetchSuggestion(query) {
+      try {
+        const response = await fetch("http://127.0.0.1:8000/suggest", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ input: query }),
+        });
+
+        const data = await response.json();
+        return data.suggestion;
+      } catch (error) {
+        return "Server error. Try again later.";
+      }
+    }
+
+    suggestBtn.addEventListener('click', async () => {
+      const userInput = inputText.value.trim();
+      if (!userInput) {
+        suggestion.textContent = 'Please enter a mood or craving!';
+        suggestion.classList.remove('text-indigo-700', 'dark:text-indigo-400');
+        suggestion.classList.add('text-red-600');
+        return;
+      }
+      suggestion.classList.remove('text-red-600');
+      suggestion.classList.add('text-indigo-700', 'dark:text-indigo-400');
+      suggestion.textContent = 'Thinking... 🤔';
+
+      const result = await fetchSuggestion(userInput);
+      suggestion.textContent = result;
+    });
+  </script>
+</body>
+</html>
